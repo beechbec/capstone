@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { FiArrowLeft, FiClock, FiPaperclip, FiSend, FiMessageSquare } from 'react-icons/fi'
 import SidebarActions from '../components/SidebarActions'
+import { resolveFlowFromTopic } from '../chat/flows'
+import type { BotMessage } from '../chat/types'
 
 type Message = {
   id: string
@@ -10,27 +12,14 @@ type Message = {
   ts: number
 }
 
-const QUICK_REPLIES = [
-  'Company History',
-  'Our Mission',
-  'Location & Hours',
-  'Contact Info',
-  'End Chat',
-]
+// Replies now come from flow modules
 
 export default function Chat() {
   const [search] = useSearchParams()
   const topic = search.get('topic') || 'About Us'
   const navigate = useNavigate()
 
-  const [messages, setMessages] = useState<Message[]>(() => [
-    {
-      id: crypto.randomUUID(),
-      role: 'bot',
-      text: `Hello! I am Printy, your virtual assistant!`,
-      ts: Date.now(),
-    },
-  ])
+  const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [typing, setTyping] = useState(false)
 
@@ -39,43 +28,35 @@ export default function Chat() {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages, typing])
 
-  // Minimal mock reply map
-  const replyMap = useMemo(
-    () => ({
-      'Company History': 'B.J. Santiago Inc. has been serving Philippine businesses for over 33 years with trusted printing solutions.',
-      'Our Mission': 'To deliver reliable, high-quality print services while providing responsive customer support through Printy.',
-      'Location & Hours': 'We are located in the Philippines. Office hours: Mon–Fri, 9:00 AM – 6:00 PM.',
-      'Contact Info': 'You can reach us via email or phone. Detailed contact channels will appear here.',
-      'End Chat': 'Thanks for chatting! If you have more questions, I’m here to help anytime.',
-    } as Record<string, string>),
-    []
-  )
+  // Flow-driven; no local reply map needed anymore
 
-  // Seed the second message based on topic on first mount
+  // Load initial messages from flow
   useEffect(() => {
-    setTyping(true)
-    const t = setTimeout(() => {
-      setTyping(false)
-      setMessages((m) => [
-        ...m,
-        {
-          id: crypto.randomUUID(),
-          role: 'bot',
-          text: `What would you like to know about B.J. Santiago Inc.?`,
-          ts: Date.now(),
-        },
-      ])
-    }, 2000)
-    return () => clearTimeout(t)
-  }, [])
+    const flow = resolveFlowFromTopic(topic)
+    const ctx = { topic: flow.title }
+    const seed = flow.initial(ctx)
+    const apply = (arr: BotMessage[]) =>
+      setMessages(arr.map((b) => ({ id: crypto.randomUUID(), role: b.role, text: b.text, ts: Date.now() } as Message)))
+    if (seed instanceof Promise) {
+      seed.then(apply)
+    } else {
+      apply(seed)
+    }
+  }, [topic])
 
   const sendUser = (text: string) => {
     setMessages((m) => [...m, { id: crypto.randomUUID(), role: 'user', text, ts: Date.now() }])
     setTyping(true)
+    const flow = resolveFlowFromTopic(topic)
+    const ctx = { topic: flow.title }
     setTimeout(() => {
-      const response = replyMap[text as string] || 'Thanks! I’ll share more details soon.'
-      setMessages((m) => [...m, { id: crypto.randomUUID(), role: 'bot', text: response, ts: Date.now() }])
-      setTyping(false)
+      flow
+        .respond(ctx, text)
+        .then((res) => {
+          const next = res.messages.map((b) => ({ id: crypto.randomUUID(), role: b.role, text: b.text, ts: Date.now() } as Message))
+          setMessages((m) => [...m, ...next])
+        })
+        .finally(() => setTyping(false))
     }, 2000)
   }
 
@@ -130,7 +111,11 @@ export default function Chat() {
                   <ChatBubble role={m.role} text={m.text} ts={m.ts} />
                   {isLastBot && (
                     <div className="mt-2 flex flex-wrap gap-3">
-                      {QUICK_REPLIES.map((q) => (
+                      {(
+                        Array.isArray(resolveFlowFromTopic(topic).quickReplies({ topic: resolveFlowFromTopic(topic).title }))
+                          ? (resolveFlowFromTopic(topic).quickReplies({ topic: resolveFlowFromTopic(topic).title }) as string[])
+                          : []
+                      ).map((q) => (
                         <button
                           key={q}
                           onClick={() => sendUser(q)}
