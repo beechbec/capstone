@@ -14,6 +14,7 @@ export default function Header({ hideAuthActions = false }: HeaderProps) {
           </Link>
           <span className="ml-0 text-sm text-gold">by B.J. Santiago INC.</span>
         </div>
+        {/* TODO(auth): If Firebase user is present, show user menu and Sign out; else show Sign In/Up. Role-based links (e.g., admin) can be conditionally rendered. */}
         {!hideAuthActions && (
           <nav className="flex items-center gap-2">
             <Link to="/signin" className="h-9 px-3 rounded-md text-blue font-semibold inline-flex items-center">Sign In</Link>

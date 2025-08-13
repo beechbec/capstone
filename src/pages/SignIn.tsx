@@ -20,6 +20,7 @@ export default function SignIn() {
 
         <div className="mt-8 flex items-start justify-center">
           <div className="w-full max-w-xl bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+            {/* TODO(auth): Handle onSubmit to call Firebase signInWithEmailAndPassword(email, password); on success navigate('/app'). Show errors inline. */}
             <form className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-blue mb-1">Email</label>
@@ -65,6 +66,7 @@ export default function SignIn() {
                 <div className="h-px flex-1 bg-gray-200" />
               </div>
 
+              {/* TODO(auth): Replace with Firebase signInWithPopup(new GoogleAuthProvider()) and navigate('/app') on success. */}
               <button
                 type="button"
                 className="w-full h-11 rounded-lg border border-gray-300 bg-white font-semibold text-blue inline-flex items-center justify-center gap-3"

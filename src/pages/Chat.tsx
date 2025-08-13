@@ -23,6 +23,8 @@ export default function Chat() {
   const [input, setInput] = useState('')
   const [typing, setTyping] = useState(false)
 
+  // TODO(db): When ready, load existing conversation from Supabase on mount and persist messages to a 'messages' table. Use user id from Firebase auth.
+
   const listRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' })
@@ -79,6 +81,7 @@ export default function Chat() {
 
         <div className="p-3">
           <div className="text-xs font-semibold text-gray-500 mb-2">RECENT CHATS</div>
+          {/* TODO(db): Query recent chats for the current user from Supabase 'conversations' and list them here. */}
           <button className="w-full flex items-center gap-3 rounded-xl px-3 py-3 bg-cream border border-blue/20">
             <FiMessageSquare className="text-blue" />
             <div className="flex-1 text-left">
@@ -143,6 +146,7 @@ export default function Chat() {
 
         <div className="px-6 pb-4">
           <form onSubmit={onSubmit} className="flex items-center gap-2">
+            {/* TODO(storage): Upload to Supabase Storage on click and attach file URL to outgoing message. */}
             <button type="button" className="h-11 w-11 grid place-items-center rounded-lg border border-blue/20 bg-white text-blue">
               <FiPaperclip />
             </button>

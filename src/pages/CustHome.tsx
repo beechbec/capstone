@@ -4,6 +4,7 @@ import ActionButton from '../components/ActionButton'
 import SidebarActions from '../components/SidebarActions'
 
 export default function CustHome() {
+  // TODO(auth): Guard this page; if no Firebase user, redirect to '/signin'.
   return (
     <div className="min-h-screen bg-cream text-blue flex">
       {/* Sidebar */}

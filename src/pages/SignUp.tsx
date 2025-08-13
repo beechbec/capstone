@@ -63,6 +63,7 @@ export default function SignUp() {
                   </div>
                 </form>
 
+                {/* TODO(auth+db): On real submit, use Firebase createUserWithEmailAndPassword; then insert a row into Supabase 'profiles' with uid, email, and role (e.g., 'customer'). */}
                 <button onClick={next} className="w-full mt-4 h-11 rounded-lg bg-blue text-white font-semibold">Next</button>
 
                 <div className="flex items-center gap-3 my-4">
@@ -131,12 +132,14 @@ export default function SignUp() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-blue mb-1">Province</label>
+                    {/* TODO(db): Fetch provinces from Supabase table 'provinces' on entering Step 3; store in state and map into options. */}
                     <select className="w-full h-11 rounded-lg border border-blue/30 px-3 outline-none focus:ring-2 focus:ring-blue">
                       <option value="">Select province</option>
                     </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-blue mb-1">City/Municipality</label>
+                    {/* TODO(db): After province is selected, fetch cities from Supabase 'cities' filtering by province_id. */}
                     <select className="w-full h-11 rounded-lg border border-blue/30 px-3 outline-none focus:ring-2 focus:ring-blue">
                       <option value="">Select province first</option>
                     </select>
@@ -151,6 +154,7 @@ export default function SignUp() {
 
                 <div className="mt-4 flex justify-between">
                   <button onClick={prev} className="inline-flex items-center gap-2 h-11 px-4 rounded-lg bg-gold text-white"><FiChevronLeft /> Previous</button>
+                  {/* TODO(db): On click, upsert address/profile into Supabase (e.g., 'addresses' linked to user uid, and 'profiles' with role). Then navigate('/app'). */}
                   <button className="h-11 px-4 rounded-lg bg-blue text-white font-semibold">Create Account</button>
                 </div>
               </div>
