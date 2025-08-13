@@ -6,6 +6,7 @@ import App from './App'
 import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
 import AppHome from './pages/CustHome'
+import Chat from './pages/Chat'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -15,6 +16,7 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/app" element={<AppHome />} />
+        <Route path="/chat" element={<Chat />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

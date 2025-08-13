@@ -12,3 +12,15 @@
     @apply font-heading;
   }
 }
+
+@layer utilities {
+  .animate-spin-slow { animation: spin 1.5s linear infinite; }
+
+  @keyframes dot-bounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: .35 }
+    30% { transform: translateY(-3px); opacity: 1 }
+  }
+  .animate-dot { animation: dot-bounce 1s ease-in-out infinite; }
+  .animation-delay-200 { animation-delay: .2s; }
+  .animation-delay-400 { animation-delay: .4s; }
+}

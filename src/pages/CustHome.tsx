@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
-import { FiInfo, FiHelpCircle, FiShoppingCart, FiPackage, FiSettings, FiLogOut, FiUser } from 'react-icons/fi'
+import { FiInfo, FiHelpCircle, FiShoppingCart, FiPackage, FiSettings } from 'react-icons/fi'
 import ActionButton from '../components/ActionButton'
+import SidebarActions from '../components/SidebarActions'
 
 export default function CustHome() {
   return (
@@ -14,31 +15,18 @@ export default function CustHome() {
 
         <div className="flex-1" />
 
-        <div className="p-4 space-y-3">
-          <Link
-            to="#"
-            className="h-11 w-full inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-cream px-3 font-semibold text-blue"
-          >
-            <FiUser /> Account
-          </Link>
-          <Link
-            to="/signin"
-            className="h-11 w-full inline-flex items-center gap-2 rounded-lg bg-red text-white px-3 font-semibold"
-          >
-            <FiLogOut /> Logout
-          </Link>
-        </div>
+        <SidebarActions />
       </aside>
 
       {/* Main content */}
       <main className="flex-1 flex flex-col items-center justify-start">
         <div className="w-full max-w-6xl px-6">
-          <h1 className="mt-20 mb-10 text-center font-heading text-5xl sm:text-6xl font-extrabold text-blue">
+          <h1 className="mt-40 mb-10 text-center font-heading text-5xl sm:text-6xl font-extrabold text-blue">
             How can I help you today?
           </h1>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <ActionButton icon={<FiInfo />} label="About Us" size="lg" />
+            <Link to="/chat?topic=About%20Us"><ActionButton icon={<FiInfo />} label="About Us" size="lg" /></Link>
             <ActionButton icon={<FiHelpCircle />} label="FAQs" size="lg" />
             <ActionButton icon={<FiShoppingCart className="text-gold" />} label="Place an Order" size="lg" />
             <ActionButton icon={<FiPackage />} label="Track an Order" size="lg" />
