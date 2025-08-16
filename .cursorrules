@@ -1,0 +1,337 @@
+# Printy by B.J. Santiago INC. - Cursor Rules & Guidelines
+
+## 🎨 DESIGN SYSTEM & UI/UX PATTERNS
+
+### Color Palette (Tailwind Variables)
+- Primary Blue: `#4056A1` (blue)
+- Accent Gold: `#D79922` (gold) 
+- Background Cream: `#EFE2BA` (cream)
+- Alert Red: `#F13C20` (red)
+- Supporting Lavender: `#C5CBE3` (lavender)
+
+### Typography
+- **Headings**: Font family `font-heading` (Fraunces serif)
+- **Body Text**: Font family `font-body` (Space Grotesk sans-serif)
+- **Responsive Sizing**: Always use responsive font classes (text-lg sm:text-xl lg:text-2xl)
+
+### Responsive Design Principles
+- **Mobile-First**: Start with mobile styles, scale up with breakpoints
+- **Touch Targets**: Minimum 44px (min-h-[44px]) for all interactive elements
+- **Safe Areas**: Use `safe-area-inset` utilities for mobile notches
+- **Touch Enhancement**: Add `touch-manipulation` class to interactive elements
+
+### Layout Patterns
+- **Full Height**: Use `h-screen` for viewport-constrained layouts
+- **Overflow Control**: `overflow-hidden` on containers, `overflow-y-auto` on scrollable areas
+- **Sidebar Width**: `w-72 sm:w-80 lg:w-80 xl:w-88` with custom widths in tailwind.config.js
+- **Fixed Positioning**: `fixed lg:static` pattern for mobile sidebars
+- **Grid Systems**: Use responsive grids (grid-cols-1 sm:grid-cols-2 lg:grid-cols-3)
+
+## 🏗️ COMPONENT ARCHITECTURE
+
+### Header Component (src/components/Header.tsx)
+- Sticky positioning with backdrop blur
+- Responsive logo sizing (text-2xl sm:text-3xl)
+- Optional auth actions via `hideAuthActions` prop
+- Safe area insets for mobile
+
+### Sidebar Pattern (CustHome.tsx & ChatUI.tsx)
+- **Desktop**: Static sidebar with `lg:sidebar-shadow` custom shadow
+- **Mobile**: Overlay with backdrop (bg-black bg-opacity-50 z-40)
+- **State**: `sidebarOpen` boolean for mobile toggle
+- **Animation**: `transform transition-transform duration-300 ease-in-out`
+- **Branding**: Consistent "Printy" logo with tagline
+
+### ActionButton Component (src/components/ActionButton.tsx)
+- Three sizes: `sm`, `md`, `lg` with responsive scaling
+- Touch-friendly with `min-h-[44px]`
+- Gold icon highlighting for featured actions
+- Hover/active/focus states with proper transitions
+
+### Chat Interface (src/chat/ChatUI.tsx)
+- **Container**: `h-screen overflow-hidden` for proper scrolling
+- **Messages**: `flex-1 overflow-y-auto` with `min-h-0` for flex child
+- **Bubbles**: Responsive max-width (max-w-[85%] sm:max-w-[75%] lg:max-w-[60%])
+- **Typing Indicator**: Gold dots with staggered animation delays
+- **Quick Replies**: Touch-friendly buttons with `min-h-[44px]`
+
+### Form Patterns
+- **Input Height**: `h-11` or `h-12` for touch-friendliness
+- **Padding**: `px-3 py-3` for comfortable touch areas
+- **Focus States**: `focus:ring-2 focus:ring-blue focus:border-blue`
+- **Transitions**: `transition-all duration-150`
+- **Password Toggle**: Absolute positioned eye icon in `pr-12` inputs
+
+## 🔧 TECHNICAL ARCHITECTURE
+
+### File Structure
+```
+src/
+├── chat/
+│   ├── ChatUI.tsx          # Main chat interface
+│   ├── flows/              # Hardcoded flows (will migrate to Supabase)
+│   └── types.ts            # Chat type definitions + DB boilerplate
+├── components/             # Reusable UI components
+├── pages/                  # Route-level components
+├── lib/                    # External service integrations
+└── config/                 # Environment configuration
+```
+
+### State Management
+- **React State**: Use `useState` for component-level state
+- **Auth Context**: Planned for Firebase integration (commented out)
+- **Sidebar State**: Local `sidebarOpen` boolean in layout components
+
+### Database Architecture (Future Supabase)
+- **Chat Flows**: Dynamic retrieval from `chat_flows` table
+- **Responses**: Form-based responses in `chat_responses` with `FormConfig`
+- **Conversations**: User sessions in `conversations` table
+- **Orders**: Customer orders with form data linkage
+
+### Routing Structure
+```
+/ → Landing page with hero + chat preview
+/signin → Authentication (Google OAuth ready)
+/signup → Multi-step registration
+/app → Customer home (requires auth when implemented)
+/chat?topic=X → Chat interface with topic parameter
+/account → Account settings with 4 sections
+```
+
+## 📱 RESPONSIVE BREAKPOINTS & PATTERNS
+
+### Breakpoint Strategy
+- **xs**: 475px+ (extra small phones)
+- **sm**: 640px+ (small phones → tablets)
+- **md**: 768px+ (tablets)
+- **lg**: 1024px+ (small laptops)
+- **xl**: 1280px+ (large screens)
+
+### Mobile Navigation
+- **Header**: Show hamburger menu (FiMenu) on `lg:hidden`
+- **Sidebar**: Slide-in overlay with backdrop on mobile
+- **Close**: X button (FiX) visible on mobile only
+
+### Typography Scaling
+```css
+/* Example pattern used throughout */
+text-lg sm:text-xl lg:text-2xl xl:text-3xl
+```
+
+### Spacing Patterns
+```css
+/* Padding */
+p-4 sm:p-6 lg:p-8
+
+/* Margins */
+mt-6 sm:mt-8 lg:mt-12
+
+/* Gaps */
+gap-4 sm:gap-6 lg:gap-8
+```
+
+## 🎯 INTERACTION PATTERNS
+
+### Button States
+- **Hover**: `hover:bg-blue/5 hover:border-blue/30`
+- **Active**: `active:scale-95` for tactile feedback
+- **Focus**: `focus:ring-2 focus:ring-blue/50 focus:ring-offset-2`
+- **Disabled**: `disabled:opacity-50 disabled:cursor-not-allowed`
+
+### Loading States
+- **Typing**: Gold spinner dots with animation delays
+- **Duration**: 2-second simulated delay for bot responses
+- **Visual**: Smooth fade-in animations
+
+### Navigation Patterns
+- **Back Button**: Always leads to previous logical page (/app for chat)
+- **Breadcrumbs**: Implicit through "Back" button placement
+- **Active States**: Visual feedback for current page/state
+
+## 🔒 AUTHENTICATION & DATA FLOW
+
+### Current State (Prototype)
+- Mock authentication (Google button → /app redirect)
+- Hardcoded chat flows in TypeScript modules
+- No persistent data storage
+
+### Planned Integration
+- **Firebase**: User authentication and session management
+- **Supabase**: Chat flows, conversations, orders, user profiles
+- **Form Processing**: Dynamic form generation from database `FormConfig`
+
+### Security Patterns
+- Environment variables for API keys (src/config/env.ts)
+- Protected routes with `<RequireAuth>` wrapper (ready but commented)
+- Role-based access control via user profiles
+
+## 🎨 ANIMATION & TRANSITIONS
+
+### Standard Durations
+- **Quick**: `duration-150` for interactions
+- **Medium**: `duration-300` for layout changes
+- **Slow**: `duration-500` for major state changes
+
+### Custom Animations (src/index.css)
+```css
+.animate-spin-slow { animation: spin 1.5s linear infinite; }
+.animate-dot { animation: dot-bounce 1s ease-in-out infinite; }
+.animation-delay-200 { animation-delay: .2s; }
+.animation-delay-400 { animation-delay: .4s; }
+```
+
+### Sidebar Animations
+- **Transform**: `translate-x-0` / `-translate-x-full`
+- **Transition**: `transition-transform duration-300 ease-in-out`
+- **Backdrop**: Fade in/out with opacity transition
+
+## 📋 FORM VALIDATION & UX
+
+### Input Patterns
+- **Required Fields**: Visual indicators (not implemented yet)
+- **Error States**: Red border and text (planned)
+- **Success States**: Green checkmarks (planned)
+- **Auto-complete**: Proper `autoComplete` attributes
+
+### Multi-step Forms (SignUp.tsx)
+- **Progress Indicator**: Step circles with checkmarks
+- **Navigation**: Previous/Next with consistent button styling
+- **Validation**: Per-step validation (to be implemented)
+
+## 🎯 ACCESSIBILITY STANDARDS
+
+### ARIA Labels
+- **Interactive Elements**: `aria-label` on buttons without text
+- **Form Fields**: Associated labels with proper `for` attributes
+- **Navigation**: `aria-hidden` on decorative icons
+
+### Keyboard Navigation
+- **Focus Visible**: Custom `.focus-enhanced` utility
+- **Tab Order**: Logical flow through interactive elements
+- **Skip Links**: Not implemented (consider for v2)
+
+### Screen Reader Support
+- **Semantic HTML**: Proper heading hierarchy (h1 → h6)
+- **Landmark Roles**: `main`, `nav`, `aside` elements
+- **Alt Text**: Images with descriptive alt attributes
+
+## 🚀 PERFORMANCE & OPTIMIZATION
+
+### Bundle Optimization
+- **Code Splitting**: Route-level components
+- **Tree Shaking**: ES modules throughout
+- **Image Optimization**: SVG icons, responsive images
+
+### CSS Strategy
+- **Tailwind**: Utility-first with custom utilities
+- **Critical CSS**: Inlined fonts and base styles
+- **Purging**: Unused styles removed in production
+
+### Loading Strategy
+- **Lazy Loading**: Route components
+- **Prefetching**: Critical resources
+- **Caching**: Static assets and API responses (planned)
+
+## 🛠️ DEVELOPMENT PATTERNS
+
+### TypeScript Standards
+- **Strict Mode**: Enabled with comprehensive rules
+- **Interface Definitions**: Clear type contracts
+- **Props Types**: Explicit component prop interfaces
+
+### Component Patterns
+- **Composition**: Prefer composition over inheritance
+- **Props Drilling**: Avoid with proper state architecture
+- **Custom Hooks**: Extract reusable logic (planned)
+
+### File Naming
+- **Components**: PascalCase.tsx
+- **Utilities**: camelCase.ts
+- **Constants**: SCREAMING_SNAKE_CASE
+
+## 📝 CODE STYLE GUIDELINES
+
+### Import Organization
+```typescript
+// 1. React imports
+import { useState, useEffect } from 'react'
+// 2. External libraries
+import { Link } from 'react-router-dom'
+// 3. Internal components
+import Header from '../components/Header'
+// 4. Types
+import type { User } from './types'
+```
+
+### CSS Class Organization
+```typescript
+// Group related classes
+className="
+  // Layout
+  flex items-center justify-between
+  // Sizing
+  h-12 w-full max-w-lg
+  // Styling
+  rounded-lg border border-blue/20 bg-white
+  // States
+  hover:bg-blue/5 focus:ring-2 focus:ring-blue
+  // Responsive
+  sm:h-14 lg:max-w-xl
+  // Utilities
+  transition-all duration-150 touch-manipulation
+"
+```
+
+## 🔄 FUTURE ARCHITECTURE NOTES
+
+### Supabase Migration Path
+1. **Chat Flows**: Move from TypeScript to database tables
+2. **Form Rendering**: Dynamic forms from `FormConfig` objects
+3. **User Data**: Persistent conversations and order history
+4. **Admin Interface**: Content management for chat flows
+
+### Scalability Considerations
+- **Component Library**: Extract reusable components
+- **State Management**: Consider Zustand for complex state
+- **API Layer**: Centralized service calls
+- **Testing**: Unit and integration test setup
+
+### Mobile App Considerations
+- **PWA Ready**: Service worker and manifest
+- **Responsive Images**: Multiple resolutions
+- **Offline Support**: Cached conversations
+- **Push Notifications**: Order updates and chat messages
+
+---
+
+## 🎯 IMPLEMENTATION REMINDERS
+
+### Always Include
+- `touch-manipulation` on interactive elements
+- Responsive font sizes (sm:, lg:, xl: prefixes)
+- Proper focus states for accessibility
+- Loading states for async operations
+- Error boundaries for component failures
+
+### Never Do
+- Fixed pixel values instead of responsive units
+- Missing alt text on images
+- Buttons without proper keyboard support
+- Forms without proper validation feedback
+- Hard-coded strings (prepare for i18n)
+
+### Performance Checklist
+- ✅ Minimize re-renders with proper dependency arrays
+- ✅ Use React.memo for expensive components
+- ✅ Optimize images with proper formats and sizes
+- ✅ Implement proper error boundaries
+- ✅ Monitor bundle size and core web vitals
+
+---
+
+*Last Updated: Current development session*
+*Project: Printy Chatbot Platform*
+*Framework: React + TypeScript + Tailwind CSS*
+```
+
+This comprehensive `.cursorrules` file captures all the patterns, conventions, and architectural decisions we've established throughout our development process. It will help maintain consistency and guide future development decisions in the Printy project.
