@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { FiArrowLeft, FiClock, FiPaperclip, FiSend, FiMessageSquare } from 'react-icons/fi'
 import SidebarActions from '../components/SidebarActions'
-import { resolveFlowFromTopic } from '../chat/flows'
-import type { BotMessage } from '../chat/types'
+import { resolveFlowFromTopic } from './flows'
+import type { BotMessage } from './types'
 
 type Message = {
   id: string
