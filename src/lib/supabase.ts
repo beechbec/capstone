@@ -1,13 +1,11 @@
 // Lightweight scaffold for Supabase integration.
 // Replace these placeholders with real @supabase/supabase-js client when ready.
+import { hasSupabaseEnv } from '../config/env'
 
 export type SupabaseClient = unknown
 
 export function isSupabaseConfigured(): boolean {
-  return Boolean(
-    (import.meta as any).env?.VITE_SUPABASE_URL &&
-      (import.meta as any).env?.VITE_SUPABASE_ANON_KEY
-  )
+  return hasSupabaseEnv()
 }
 
 // TODO(db): Implement by creating supabase client with createClient(VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY)

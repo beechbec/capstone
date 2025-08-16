@@ -1,5 +1,6 @@
 // Lightweight scaffold for Firebase integration.
 // Replace these placeholders with real Firebase SDK calls when ready.
+import { hasFirebaseEnv } from '../config/env'
 
 export type AuthUser = {
   uid: string
@@ -9,10 +10,7 @@ export type AuthUser = {
 }
 
 export function isFirebaseConfigured(): boolean {
-  return Boolean(
-    (import.meta as any).env?.VITE_FIREBASE_API_KEY &&
-      (import.meta as any).env?.VITE_FIREBASE_AUTH_DOMAIN
-  )
+  return hasFirebaseEnv()
 }
 
 // TODO(auth): Implement using Firebase SDK: initializeApp(config) and getAuth().
