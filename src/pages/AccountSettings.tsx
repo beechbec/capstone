@@ -97,55 +97,55 @@ export default function AccountSettings() {
     <div className="min-h-screen bg-cream text-blue">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-6 py-4">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <Link 
               to="/app" 
-              className="inline-flex items-center gap-2 text-blue font-semibold hover:text-blue/80 mr-6"
+              className="inline-flex items-center gap-2 text-blue font-semibold hover:text-blue/80 mr-4 touch-manipulation"
             >
               <FiArrowLeft /> Back
             </Link>
-            <h1 className="font-heading text-3xl font-extrabold text-blue">Account Settings</h1>
-            <div className="w-24" />
+            <h1 className="font-heading text-xl sm:text-2xl lg:text-3xl font-extrabold text-blue text-center">Account Settings</h1>
+            <div className="w-16 sm:w-24" />
           </div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
         {/* Profile Overview Card */}
-        <div className="bg-white rounded-2xl border border-blue/20 p-6 mb-8">
-          <div className="flex items-center gap-4">
-            <div className="h-16 w-16 rounded-full bg-blue text-white flex items-center justify-center text-2xl font-heading font-bold">
+        <div className="bg-white rounded-2xl border border-blue/20 p-4 sm:p-6 mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+            <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-blue text-white flex items-center justify-center text-2xl sm:text-3xl font-heading font-bold flex-shrink-0">
               {userData.displayName
                 .split(" ")
                 .map((n) => n[0])
                 .join("")}
             </div>
-            <div>
-              <h2 className="font-heading text-2xl font-bold text-blue">{userData.displayName}</h2>
-              <p className="text-gray-600">{userData.email}</p>
-              <span className="inline-block mt-1 px-3 py-1 bg-gold/20 text-gold rounded-full text-sm font-semibold border border-gold/30">
+            <div className="text-center sm:text-left">
+              <h2 className="font-heading text-xl sm:text-2xl font-bold text-blue">{userData.displayName}</h2>
+              <p className="text-gray-600 text-sm sm:text-base mt-1">{userData.email}</p>
+              <span className="inline-block mt-2 px-3 py-1 bg-gold/20 text-gold rounded-full text-xs sm:text-sm font-semibold border border-gold/30">
                 Premium Member
               </span>
             </div>
           </div>
         </div>
 
-        <div className="space-y-8">
+        <div className="space-y-6 sm:space-y-8">
           {/* Personal Information Section */}
-          <div className="bg-white rounded-2xl border border-blue/20 p-6">
-            <div className="flex items-center justify-between mb-6">
+          <div className="bg-white rounded-2xl border border-blue/20 p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
               <div>
-                <h3 className="font-heading text-xl font-bold text-blue flex items-center gap-2">
+                <h3 className="font-heading text-lg sm:text-xl font-bold text-blue flex items-center gap-2">
                   <FiUser className="h-5 w-5" />
                   Personal Information
                 </h3>
-                <p className="text-gray-600 mt-1">Update your personal details and contact information</p>
+                <p className="text-gray-600 mt-1 text-sm sm:text-base">Update your personal details and contact information</p>
               </div>
               {!isEditing && (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="inline-flex items-center gap-2 px-4 py-2 border border-blue text-blue rounded-lg font-semibold hover:bg-blue hover:text-white transition-colors"
+                  className="inline-flex items-center justify-center gap-2 px-4 py-3 border border-blue text-blue rounded-lg font-semibold hover:bg-blue hover:text-white transition-colors touch-manipulation min-h-[44px] w-full sm:w-auto"
                 >
                   <FiEdit className="h-4 w-4" />
                   Edit
@@ -164,10 +164,10 @@ export default function AccountSettings() {
                     type="text"
                     value={userData.displayName}
                     onChange={(e) => handleInputChange("displayName", e.target.value)}
-                    className="w-full px-3 py-2 border border-blue/20 rounded-lg focus:ring-2 focus:ring-blue outline-none"
+                    className="w-full px-3 py-3 text-base border border-blue/20 rounded-lg focus:ring-2 focus:ring-blue focus:border-blue outline-none transition-all duration-150 touch-manipulation"
                   />
                 ) : (
-                  <p className="text-gray-900 bg-gray-50 p-3 rounded-lg">{userData.displayName}</p>
+                  <p className="text-gray-900 bg-gray-50 p-3 rounded-lg text-sm sm:text-base">{userData.displayName}</p>
                 )}
               </div>
 
@@ -182,10 +182,10 @@ export default function AccountSettings() {
                     type="email"
                     value={userData.email}
                     onChange={(e) => handleInputChange("email", e.target.value)}
-                    className="w-full px-3 py-2 border border-blue/20 rounded-lg focus:ring-2 focus:ring-blue outline-none"
+                    className="w-full px-3 py-3 text-base border border-blue/20 rounded-lg focus:ring-2 focus:ring-blue focus:border-blue outline-none transition-all duration-150 touch-manipulation"
                   />
                 ) : (
-                  <p className="text-gray-900 bg-gray-50 p-3 rounded-lg">{userData.email}</p>
+                  <p className="text-gray-900 bg-gray-50 p-3 rounded-lg text-sm sm:text-base">{userData.email}</p>
                 )}
               </div>
 
@@ -258,25 +258,25 @@ export default function AccountSettings() {
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              {isEditing && (
-                <div className="flex gap-3 pt-4">
-                  <button
-                    onClick={handleCancel}
-                    className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
-                  >
-                    <FiX className="h-4 w-4" />
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleSaveChanges}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-blue text-white rounded-lg font-semibold hover:bg-blue/90 transition-colors"
-                  >
-                    <FiCheck className="h-4 w-4" />
-                    Save Changes
-                  </button>
-                </div>
-              )}
+                             {/* Action Buttons */}
+               {isEditing && (
+                 <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                   <button
+                     onClick={handleCancel}
+                     className="inline-flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors touch-manipulation min-h-[44px]"
+                   >
+                     <FiX className="h-4 w-4" />
+                     Cancel
+                   </button>
+                   <button
+                     onClick={handleSaveChanges}
+                     className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-blue text-white rounded-lg font-semibold hover:bg-blue/90 transition-colors touch-manipulation min-h-[44px]"
+                   >
+                     <FiCheck className="h-4 w-4" />
+                     Save Changes
+                   </button>
+                 </div>
+               )}
             </div>
           </div>
 

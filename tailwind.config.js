@@ -23,6 +23,15 @@ export default {
           'sans-serif'
         ]
       },
+      width: {
+        '88': '22rem',
+        '92': '23rem',
+        '96': '24rem',
+      },
+      gridTemplateColumns: {
+        'sidebar-content': '20rem 1fr',
+        'sidebar-content-xl': '22rem 1fr',
+      }
     },
   },
   plugins: [],
