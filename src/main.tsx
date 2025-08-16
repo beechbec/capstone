@@ -5,8 +5,9 @@ import './index.css'
 import App from './App'
 import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
-import Chat from './chat/Chat'
+import Chat from './chat/ChatUI'
 import CustHome from './pages/CustHome'
+import AccountSettings from './pages/AccountSettings'
 // import { AuthProvider } from './context/AuthContext'
 // import RequireAuth from './components/RequireAuth'
 
@@ -25,6 +26,7 @@ createRoot(document.getElementById('root')!).render(
           <Route path="/chat" element={<RequireAuth><Chat /></RequireAuth>} /> */}
           <Route path="/app" element={<CustHome />} />
           <Route path="/chat" element={<Chat />} />
+          <Route path="/account" element={<AccountSettings />} />
         </Routes>
       </BrowserRouter>
     {/* </AuthProvider> */}
