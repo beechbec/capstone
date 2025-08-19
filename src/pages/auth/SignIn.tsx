@@ -1,11 +1,15 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { FiEye, FiEyeOff } from 'react-icons/fi'
 import { FcGoogle } from 'react-icons/fc'
 import Header from '../../components/shared/Header'
+import { SEEDED_USERS, signInMock } from '../../data/auth'
 
 export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false)
+  const [email, setEmail] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const navigate = useNavigate()
 
   return (
     <div className="min-h-screen bg-white">
@@ -20,8 +24,19 @@ export default function SignIn() {
 
         <div className="mt-6 sm:mt-8 flex items-start justify-center">
           <div className="w-full max-w-xl bg-white rounded-2xl border border-gray-200 p-4 sm:p-6 shadow-sm">
-            {/* TODO(auth): Handle onSubmit to call Firebase signInWithEmailAndPassword(email, password); on success navigate('/app'). Show errors inline. */}
-            <form className="space-y-4">
+            {/* Prototype: in-memory sign in via seeded email list */}
+            <form
+              className="space-y-4"
+              onSubmit={(e) => {
+                e.preventDefault()
+                const user = signInMock(email)
+                if (!user) {
+                  setError('Email not found. Use a seeded account or sign up first.')
+                  return
+                }
+                navigate('/app')
+              }}
+            >
               <div>
                 <label className="block text-sm font-medium text-blue mb-2">Email</label>
                 <input
@@ -29,6 +44,8 @@ export default function SignIn() {
                   type="email"
                   placeholder="you@email.com"
                   autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
 
@@ -60,6 +77,8 @@ export default function SignIn() {
                 <a href="#" className="text-red font-semibold">Forgot your password?</a>
               </div>
 
+              {error && <div className="text-red text-sm">{error}</div>}
+
               <button 
                 type="submit" 
                 className="w-full h-12 rounded-lg bg-blue text-white font-semibold hover:bg-blue/90 active:scale-98 focus:outline-none focus:ring-2 focus:ring-blue/50 focus:ring-offset-2 transition-all duration-150 touch-manipulation"
@@ -73,11 +92,15 @@ export default function SignIn() {
                 <div className="h-px flex-1 bg-gray-200" />
               </div>
 
-              {/* TODO(auth): Replace with Firebase signInWithPopup(new GoogleAuthProvider()) and navigate('/app') on success. */}
               <button
                 type="button"
                 className="w-full h-12 rounded-lg border border-gray-300 bg-white font-semibold text-blue inline-flex items-center justify-center gap-3 hover:bg-gray-50 active:scale-98 focus:outline-none focus:ring-2 focus:ring-blue/50 focus:ring-offset-2 transition-all duration-150 touch-manipulation"
-                onClick={() => (window.location.href = '/app')}
+                onClick={() => {
+                  // Quick-pick the first customer for demo
+                  const demo = SEEDED_USERS.find((u) => u.role === 'customer')
+                  if (demo) signInMock(demo.email)
+                  navigate('/app')
+                }}
               >
                 <FcGoogle className="text-xl" /> Sign in with Google
               </button>

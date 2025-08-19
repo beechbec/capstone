@@ -8,6 +8,9 @@ import SignUp from './pages/auth/SignUp'
 import Chat from './chat/ChatUI'
 import CustHome from './pages/customer/CustHome'
 import AccountSettings from './pages/customer/AccountSettings'
+import AdminDashboard from './pages/admin/Dashboard'
+import AdminOrders from './pages/admin/Orders'
+import AdminPortfolio from './pages/admin/Portfolio'
 // import { AuthProvider } from './context/AuthContext'
 // import RequireAuth from './components/RequireAuth'
 
@@ -27,6 +30,9 @@ createRoot(document.getElementById('root')!).render(
           <Route path="/app" element={<CustHome />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/account" element={<AccountSettings />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/orders" element={<AdminOrders />} />
+          <Route path="/admin/portfolio" element={<AdminPortfolio />} />
         </Routes>
       </BrowserRouter>
     {/* </AuthProvider> */}

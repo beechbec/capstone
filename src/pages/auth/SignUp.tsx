@@ -244,11 +244,9 @@ export default function SignUp() {
                     <FiChevronLeft /> Previous
                   </button>
                   {/* TODO(db): On click, upsert address/profile into Supabase (e.g., 'addresses' linked to user uid, and 'profiles' with role). Then navigate('/app'). */}
-                  <button 
-                    className="h-11 sm:h-12 px-4 sm:px-6 rounded-lg bg-blue text-white font-semibold text-sm sm:text-base hover:bg-blue/90 active:scale-98 focus:outline-none focus:ring-2 focus:ring-blue/50 focus:ring-offset-2 transition-all duration-150 touch-manipulation tap-target order-1 xs:order-2"
-                  >
+                  <Link to="/signin" className="h-11 sm:h-12 px-4 sm:px-6 rounded-lg bg-blue text-white font-semibold text-sm sm:text-base hover:bg-blue/90 active:scale-98 focus:outline-none focus:ring-2 focus:ring-blue/50 focus:ring-offset-2 transition-all duration-150 touch-manipulation tap-target order-1 xs:order-2 grid place-items-center">
                     Create Account
-                  </button>
+                  </Link>
                 </div>
               </div>
             )}

@@ -67,9 +67,9 @@ export default function CustHome() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 pb-8">
               <Link to="/chat?topic=About%20Us"><ActionButton icon={<FiInfo />} label="About Us" size="lg" /></Link>
               <Link to="/chat?topic=FAQs"><ActionButton icon={<FiHelpCircle />} label="FAQs" size="lg" /></Link>
-              <ActionButton icon={<FiShoppingCart className="text-gold" />} label="Place an Order" size="lg" />
-              <ActionButton icon={<FiPackage />} label="Track an Order" size="lg" />
-              <ActionButton icon={<FiSettings />} label="Services Offered" size="lg" />
+              <Link to="/chat?topic=Place%20Order"><ActionButton icon={<FiShoppingCart className="text-gold" />} label="Place an Order" size="lg" /></Link>
+              <Link to="/chat?topic=Track%20Ticket"><ActionButton icon={<FiPackage />} label="Track a Ticket" size="lg" /></Link>
+              <Link to="/chat?topic=Services%20Offered"><ActionButton icon={<FiSettings />} label="Services Offered" size="lg" /></Link>
             </div>
           </div>
         </main>

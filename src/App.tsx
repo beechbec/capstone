@@ -1,10 +1,13 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { FiChevronDown, FiInfo, FiHelpCircle, FiShoppingCart, FiPackage, FiSettings } from 'react-icons/fi'
 import Header from './components/shared/Header'
 import ActionButton from './components/shared/ActionButton'
+import GuestChatUI from './chat/GuestChatUI'
 
 function App() {
   const chatSectionRef = useRef<HTMLDivElement | null>(null)
+  const [topic, setTopic] = useState<string>('')
+  const [guestChatActive, setGuestChatActive] = useState(false)
 
   const handleScrollToChat = () => {
     chatSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -40,22 +43,28 @@ function App() {
           </div>
         </section>
 
-        {/* Chat (full screen) */}
+        {/* Guest Chat (landing) */}
         <section className="min-h-[100vh] min-h-[100dvh] bg-gradient-to-b from-cream to-white safe-area-inset-bottom" ref={chatSectionRef}>
           <div className="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8 min-h-[100vh] min-h-[100dvh] flex flex-col items-center justify-center text-center py-8 sm:py-12">
             <h2 className="text-blue font-heading text-2xl xs:text-3xl sm:text-4xl font-bold mb-2 sm:mb-4 leading-tight px-2 sm:px-0">
               Hi there! I'm Printy, your chatbot assistant!
             </h2>
             <p className="text-gray-500 mb-6 sm:mb-8 text-sm sm:text-base px-2 sm:px-0">
-              Click any button below to start a conversation with me.
+              Choose a topic and chat right here. Guest chats are not saved.
             </p>
-            <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 w-full max-w-xs xs:max-w-lg sm:max-w-2xl lg:max-w-3xl px-2 sm:px-0">
-              <ActionButton icon={<FiInfo aria-hidden />} label="About Us" size="md" />
-              <ActionButton icon={<FiHelpCircle aria-hidden />} label="FAQs" size="md" />
-              <ActionButton icon={<FiShoppingCart aria-hidden />} label="Place an Order" size="md" />
-              <ActionButton icon={<FiPackage aria-hidden />} label="Track an Order" size="md" />
-              <ActionButton icon={<FiSettings aria-hidden />} label="Services Offered" size="md" />
-            </div>
+            {!guestChatActive ? (
+              <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 w-full max-w-xs xs:max-w-lg sm:max-w-2xl lg:max-w-3xl px-2 sm:px-0">
+                <button onClick={() => { setTopic('About Us'); setGuestChatActive(true) }} className="text-left"><ActionButton icon={<FiInfo aria-hidden />} label="About Us" size="md" /></button>
+                <button onClick={() => { setTopic('FAQs'); setGuestChatActive(true) }} className="text-left"><ActionButton icon={<FiHelpCircle aria-hidden />} label="FAQs" size="md" /></button>
+                <button onClick={() => { setTopic('Guest Place Order'); setGuestChatActive(true) }} className="text-left"><ActionButton icon={<FiShoppingCart aria-hidden />} label="Place an Order" size="md" /></button>
+                <button onClick={() => { setTopic('Track Ticket'); setGuestChatActive(true) }} className="text-left"><ActionButton icon={<FiPackage aria-hidden />} label="Track a Ticket" size="md" /></button>
+                <button onClick={() => { setTopic('Services Offered'); setGuestChatActive(true) }} className="text-left"><ActionButton icon={<FiSettings aria-hidden />} label="Services Offered" size="md" /></button>
+              </div>
+            ) : (
+              <div className="mt-2 w-full">
+                <GuestChatUI topic={topic} onBack={() => { setGuestChatActive(false); setTopic('') }} />
+              </div>
+            )}
           </div>
         </section>
       </main>

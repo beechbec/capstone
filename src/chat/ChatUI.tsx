@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { getCurrentUser } from '../data/auth'
 import { FiArrowLeft, FiClock, FiPaperclip, FiSend, FiMessageSquare, FiMenu, FiX } from 'react-icons/fi'
 import SidebarActions from '../components/shared/SidebarActions'
 import { resolveFlowFromTopic } from './flows'
@@ -23,6 +24,12 @@ export default function Chat() {
   const [input, setInput] = useState('')
   const [typing, setTyping] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [suggestedReplies, setSuggestedReplies] = useState<string[] | null>(null)
+  const [ended, setEnded] = useState(false)
+  const idleWarnRef = useRef<number | null>(null)
+  const idleEndRef = useRef<number | null>(null)
+  const IDLE_MS = 120000 // 2 minutes
+  const GRACE_MS = 30000 // 30 seconds
 
   // TODO(db): When ready, load existing conversation from Supabase on mount and persist messages to a 'messages' table. Use user id from Firebase auth.
 
@@ -45,11 +52,42 @@ export default function Chat() {
     } else {
       apply(seed)
     }
+    setSuggestedReplies(null)
+    setEnded(false)
   }, [topic])
 
   const sendUser = (text: string) => {
+    // Handle sign-in intent from guest
+    if (!getCurrentUser() && text.trim().toLowerCase().includes('sign in')) {
+      navigate('/signin')
+      return
+    }
+    if (ended) {
+      const choice = text.toLowerCase()
+      if (choice.includes('satisfied')) {
+        setMessages((m) => [
+          ...m,
+          { id: crypto.randomUUID(), role: 'user', text, ts: Date.now() },
+          { id: crypto.randomUUID(), role: 'bot', text: 'Thanks for your feedback!', ts: Date.now() },
+        ])
+        return
+      }
+      // Ignore other input when ended
+      return
+    }
     setMessages((m) => [...m, { id: crypto.randomUUID(), role: 'user', text, ts: Date.now() }])
     setTyping(true)
+    // Handle explicit end chat
+    if (text.toLowerCase().includes('end chat') || text.toLowerCase() === 'end') {
+      setTyping(false)
+      setEnded(true)
+      setSuggestedReplies(['Satisfied', 'Unsatisfied'])
+      setMessages((m) => [
+        ...m,
+        { id: crypto.randomUUID(), role: 'bot', text: 'Chat ended. How was your experience?', ts: Date.now() },
+      ])
+      return
+    }
     const flow = resolveFlowFromTopic(topic)
     const ctx = { topic: flow.title }
     setTimeout(() => {
@@ -58,6 +96,12 @@ export default function Chat() {
         .then((res) => {
           const next = res.messages.map((b) => ({ id: crypto.randomUUID(), role: b.role, text: b.text, ts: Date.now() } as Message))
           setMessages((m) => [...m, ...next])
+          if (Array.isArray(res.quickReplies)) {
+            setSuggestedReplies(res.quickReplies)
+          } else {
+            setSuggestedReplies(null)
+          }
+          // If flow indicates end chat via message content, keep prototype simple and do nothing here
         })
         .finally(() => setTyping(false))
     }, 2000)
@@ -70,6 +114,34 @@ export default function Chat() {
     setInput('')
     sendUser(value)
   }
+
+  // Idle detection: warn then end chat
+  useEffect(() => {
+    const clearTimers = () => {
+      if (idleWarnRef.current) window.clearTimeout(idleWarnRef.current)
+      if (idleEndRef.current) window.clearTimeout(idleEndRef.current)
+      idleWarnRef.current = null
+      idleEndRef.current = null
+    }
+    clearTimers()
+    if (ended) return
+    idleWarnRef.current = window.setTimeout(() => {
+      setMessages((m) => [
+        ...m,
+        { id: crypto.randomUUID(), role: 'bot', text: 'Are you still there?', ts: Date.now() },
+      ])
+    }, IDLE_MS)
+    idleEndRef.current = window.setTimeout(() => {
+      setEnded(true)
+      setSuggestedReplies(['Satisfied', 'Unsatisfied'])
+      setMessages((m) => [
+        ...m,
+        { id: crypto.randomUUID(), role: 'bot', text: 'Ending the conversation due to inactivity.', ts: Date.now() },
+        { id: crypto.randomUUID(), role: 'bot', text: 'How was your experience?', ts: Date.now() },
+      ])
+    }, IDLE_MS + GRACE_MS)
+    return clearTimers
+  }, [messages, typing, ended])
 
   return (
     <div className="h-screen overflow-hidden bg-cream text-blue flex flex-col lg:grid lg:grid-cols-[20rem_1fr] xl:grid-cols-[22rem_1fr]">
@@ -152,9 +224,11 @@ export default function Chat() {
                   {isLastBot && (
                     <div className="mt-3 flex flex-wrap gap-2 sm:gap-3">
                       {(
-                        Array.isArray(resolveFlowFromTopic(topic).quickReplies({ topic: resolveFlowFromTopic(topic).title }))
-                          ? (resolveFlowFromTopic(topic).quickReplies({ topic: resolveFlowFromTopic(topic).title }) as string[])
-                          : []
+                        suggestedReplies ?? (
+                          Array.isArray(resolveFlowFromTopic(topic).quickReplies({ topic: resolveFlowFromTopic(topic).title }))
+                            ? (resolveFlowFromTopic(topic).quickReplies({ topic: resolveFlowFromTopic(topic).title }) as string[])
+                            : []
+                        )
                       ).map((q) => (
                         <button
                           key={q}
@@ -214,10 +288,11 @@ export default function Chat() {
                 placeholder:text-gray-400
                 transition-all duration-150
               "
+              disabled={ended}
             />
             <button 
               type="submit" 
-              disabled={!input.trim()}
+              disabled={!input.trim() || ended}
               className="
                 h-11 px-4 rounded-lg bg-red text-white font-semibold inline-flex items-center gap-2 
                 hover:bg-red/90 active:scale-95 
