@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { FiChevronDown, FiInfo, FiHelpCircle, FiShoppingCart, FiPackage, FiSettings } from 'react-icons/fi'
 import Header from './components/shared/Header'
 import ActionButton from './components/shared/ActionButton'
-import GuestChatUI from './chat/GuestChatUI'
+import GuestChat from './components/guest/chat/GuestChat'
 
 function App() {
   const chatSectionRef = useRef<HTMLDivElement | null>(null)
@@ -62,7 +62,7 @@ function App() {
               </div>
             ) : (
               <div className="mt-2 w-full">
-                <GuestChatUI topic={topic} onBack={() => { setGuestChatActive(false); setTopic('') }} />
+                <GuestChat topic={topic} onBack={() => { setGuestChatActive(false); setTopic('') }} />
               </div>
             )}
           </div>
