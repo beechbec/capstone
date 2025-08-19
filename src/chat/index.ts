@@ -4,8 +4,8 @@ import { faqsFlow } from './flows/Faqs'
 import { faqsFlow as guestFaqsFlow } from './flows/GuestFaqs'
 import { servicesOfferedFlow } from './flows/ServicesOffered'
 import { placeOrderFlow } from './flows/PlaceOrder'
-import { trackTicketFlow } from './flows/TrackTicket'
 import { guestPlaceOrderFlow } from './flows/GuestPlaceOrder'
+import { issueTicketFlow } from './flows/IssueTicket'
 
 export const flows: Record<string, ChatFlow> = {
   about: aboutUsFlow,
@@ -13,8 +13,8 @@ export const flows: Record<string, ChatFlow> = {
   'guest-faqs': guestFaqsFlow,
   services: servicesOfferedFlow,
   'place-order': placeOrderFlow,
-  'track-ticket': trackTicketFlow,
   'guest-place-order': guestPlaceOrderFlow,
+  'issue-ticket': issueTicketFlow,
 }
 
 export function resolveFlowFromTopic(topicParam: string | null | undefined): ChatFlow {
@@ -25,6 +25,6 @@ export function resolveFlowFromTopic(topicParam: string | null | undefined): Cha
   if (normalized.includes('service')) return servicesOfferedFlow
   if (normalized.includes('place')) return placeOrderFlow
   if (normalized.includes('guest-place')) return guestPlaceOrderFlow
-  if (normalized.includes('ticket') || normalized.includes('track')) return trackTicketFlow
+  if (normalized.includes('issue')) return issueTicketFlow
   return aboutUsFlow
 }

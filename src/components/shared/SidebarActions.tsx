@@ -20,7 +20,7 @@ export default function SidebarActions({ className = '' }: { className?: string 
           }
           window.location.href = '/signin'
         }}
-        className="h-12 lg:h-14 w-full inline-flex items-center justify-center gap-2 lg:gap-3 rounded-lg bg-red text-white px-3 lg:px-4 font-semibold hover:bg-red/90 transition-colors touch-manipulation text-sm lg:text-base"
+        className="h-12 lg:h-14 w-full inline-flex items-center justify-start gap-2 lg:gap-3 rounded-lg bg-red text-white px-3 lg:px-4 font-semibold hover:bg-red/90 transition-colors touch-manipulation text-sm lg:text-base"
       >
         <span className="text-lg lg:text-xl xl:text-2xl" aria-hidden="true"><FiLogOut /></span>
         {user ? 'Logout' : 'Logout'}

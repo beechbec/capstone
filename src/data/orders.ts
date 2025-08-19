@@ -30,14 +30,14 @@ export const ORDER_STATUSES: OrderStatus[] = [
 export const RECENT_ORDERS: OrderRecord[] = [
   {
     id: 'ORD-000231',
-    customerName: 'Alex Regular',
+    customerName: 'Regular Customer',
     servicePath: 'Commercial Printing › Invoice › Carbonless Invoice Forms',
     status: 'Pending',
     createdAt: new Date().toISOString(),
   },
   {
     id: 'ORD-000145',
-    customerName: 'Vera Valued',
+    customerName: 'Valued Customer',
     servicePath: 'Digital Printing › Certificate › Standard Certificates',
     status: 'Processing',
     createdAt: new Date(Date.now() - 86400000).toISOString(),
