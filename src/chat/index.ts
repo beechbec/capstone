@@ -1,11 +1,11 @@
-import type { ChatFlow } from '../types'
-import { aboutUsFlow } from './AboutUs'
-import { faqsFlow } from './Faqs'
-import { faqsFlow as guestFaqsFlow } from './GuestFaqs'
-import { servicesOfferedFlow } from './ServicesOffered'
-import { placeOrderFlow } from './PlaceOrder'
-import { trackTicketFlow } from './TrackTicket'
-import { guestPlaceOrderFlow } from './GuestPlaceOrder'
+import type { ChatFlow } from './types'
+import { aboutUsFlow } from './flows/AboutUs'
+import { faqsFlow } from './flows/Faqs'
+import { faqsFlow as guestFaqsFlow } from './flows/GuestFaqs'
+import { servicesOfferedFlow } from './flows/ServicesOffered'
+import { placeOrderFlow } from './flows/PlaceOrder'
+import { trackTicketFlow } from './flows/TrackTicket'
+import { guestPlaceOrderFlow } from './flows/GuestPlaceOrder'
 
 export const flows: Record<string, ChatFlow> = {
   about: aboutUsFlow,

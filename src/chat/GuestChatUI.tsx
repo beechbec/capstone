@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { FiClock, FiPaperclip, FiSend } from 'react-icons/fi'
 import type { BotMessage } from './types'
-import { resolveFlowFromTopic, flows } from './flows'
+import { resolveFlowFromTopic, flows } from '.'
 import { faqsFlow as guestFaqsFlow } from './flows/GuestFaqs'
 
 type Message = {

@@ -3,7 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { getCurrentUser } from '../data/auth'
 import { FiArrowLeft, FiClock, FiPaperclip, FiSend, FiMessageSquare, FiMenu, FiX } from 'react-icons/fi'
 import SidebarActions from '../components/shared/SidebarActions'
-import { resolveFlowFromTopic } from './flows'
+import { resolveFlowFromTopic } from '.'
 import type { BotMessage } from './types'
 
 type Message = {
