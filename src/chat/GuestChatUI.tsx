@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { FiClock, FiPaperclip, FiSend } from 'react-icons/fi'
 import type { BotMessage } from './types'
 import { resolveFlowFromTopic, flows } from './flows'
+import { faqsFlow as guestFaqsFlow } from './flows/GuestFaqs'
 
 type Message = {
   id: string
@@ -23,7 +24,12 @@ export default function GuestChatUI({ topic, onBack }: { topic: string; onBack?:
   }, [messages, typing])
 
   useEffect(() => {
-    const flow = topic.toLowerCase().includes('place') ? flows['guest-place-order'] : resolveFlowFromTopic(topic)
+    const lower = topic.toLowerCase()
+    const flow = lower.includes('place')
+      ? flows['guest-place-order']
+      : lower.includes('faq')
+      ? guestFaqsFlow
+      : resolveFlowFromTopic(topic)
     const ctx = { topic: flow.title }
     const seed = flow.initial(ctx)
     const apply = (arr: BotMessage[]) =>
@@ -37,21 +43,18 @@ export default function GuestChatUI({ topic, onBack }: { topic: string; onBack?:
   const sendUser = (text: string) => {
     if (ended) return
     const lc = text.trim().toLowerCase()
-    if (lc === 'sign in' || lc.includes('sign in')) {
-      window.location.href = '/signin'
-      return
-    }
-    if (lc === 'sign up' || lc.includes('sign up')) {
-      window.location.href = '/signup'
-      return
-    }
     if (lc === 'back' || lc.includes('back')) {
       onBack?.()
       return
     }
     setMessages((m) => [...m, { id: crypto.randomUUID(), role: 'user', text, ts: Date.now() }])
     setTyping(true)
-    const flow = topic.toLowerCase().includes('place') ? flows['guest-place-order'] : resolveFlowFromTopic(topic)
+    const lower = topic.toLowerCase()
+    const flow = lower.includes('place')
+      ? flows['guest-place-order']
+      : lower.includes('faq')
+      ? guestFaqsFlow
+      : resolveFlowFromTopic(topic)
     const ctx = { topic: flow.title }
     setTimeout(() => {
       flow
@@ -60,6 +63,13 @@ export default function GuestChatUI({ topic, onBack }: { topic: string; onBack?:
           const next = res.messages.map((b) => ({ id: crypto.randomUUID(), role: b.role, text: b.text, ts: Date.now() } as Message))
           setMessages((m) => [...m, ...next])
           setSuggestedReplies(res.quickReplies ?? null)
+          // After showing redirect message, wait 2s then navigate
+          if (lc.includes('sign in') || lc.includes('already have an account')) {
+            setTimeout(() => { window.location.href = '/signin' }, 2000)
+          }
+          if (lc.includes('sign up') || lc.includes('let me sign up')) {
+            setTimeout(() => { window.location.href = '/signup' }, 2000)
+          }
         })
         .finally(() => setTyping(false))
     }, 2000)
@@ -77,19 +87,59 @@ export default function GuestChatUI({ topic, onBack }: { topic: string; onBack?:
   return (
     <div className="w-full max-w-3xl mx-auto">
       <div ref={listRef} className="flex-1 overflow-y-auto p-3 sm:p-6 min-h-[240px] bg-white rounded-xl border border-blue/20">
-        {messages.map((m) => (
-          <div key={m.id} className={`mt-4 flex ${m.role === 'bot' ? 'justify-start' : 'justify-end'}`}>
-            <div className="max-w-[85%] sm:max-w-[75%]">
-              <div className={`inline-block w-full break-words rounded-2xl px-3 py-3 sm:px-4 border shadow-sm ${m.role === 'bot' ? 'bg-white border-blue/20 text-blue' : 'bg-blue text-white border-blue'}`}>
-                <p className="text-sm sm:text-base leading-relaxed">{m.text}</p>
+        {messages.map((m, idx) => {
+          const isLastBot = m.role === 'bot' && idx === messages.length - 1
+          return (
+            <div key={m.id}>
+              <div className={`mt-4 flex ${m.role === 'bot' ? 'justify-start' : 'justify-end'}`}>
+                <div className="max-w-[85%] sm:max-w-[75%]">
+                  <div className={`inline-block w-full break-words rounded-2xl px-3 py-3 sm:px-4 border shadow-sm ${m.role === 'bot' ? 'bg-white border-blue/20 text-blue' : 'bg-blue text-white border-blue'}`}>
+                    <p className="text-sm sm:text-base leading-relaxed">{m.text}</p>
+                  </div>
+                  <div className={`mt-1 flex items-center gap-1 text-xs text-gray-500 px-1 ${m.role === 'bot' ? '' : 'justify-end'}`}>
+                    <FiClock className="h-3 w-3" />
+                    <span>{new Date(m.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                  </div>
+                </div>
               </div>
-              <div className={`mt-1 flex items-center gap-1 text-xs text-gray-500 px-1 ${m.role === 'bot' ? '' : 'justify-end'}`}>
-                <FiClock className="h-3 w-3" />
-                <span>{new Date(m.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-              </div>
+              {isLastBot && (
+                <div className="mt-3 flex flex-wrap gap-2 sm:gap-3">
+                  {(
+                    suggestedReplies ?? (
+                      (() => {
+                        const lower = topic.toLowerCase()
+                        const flow = lower.includes('place')
+                          ? flows['guest-place-order']
+                          : lower.includes('faq')
+                          ? guestFaqsFlow
+                          : resolveFlowFromTopic(topic)
+                        const ctx = { topic: flow.title }
+                        const q = flow.quickReplies(ctx)
+                        return Array.isArray(q) ? (q as string[]) : []
+                      })()
+                    )
+                  ).map((q) => (
+                    <button
+                      key={q}
+                      onClick={() => sendUser(q)}
+                      className="
+                        rounded-xl border border-blue/20 bg-white px-3 py-2 text-sm font-semibold text-blue 
+                        hover:bg-blue/5 hover:border-blue/30 
+                        active:scale-95 
+                        focus:outline-none focus:ring-2 focus:ring-blue/50 focus:ring-offset-1
+                        transition-all duration-150 ease-in-out
+                        touch-manipulation
+                        min-h-[44px] flex items-center
+                      "
+                    >
+                      {q}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          )
+        })}
         {typing && (
           <div className="mt-3 inline-flex items-center gap-2 rounded-2xl bg-white border border-blue/20 px-4 py-3">
             <span className="inline-block h-1.5 w-1.5 rounded-full bg-gold animate-dot" />
@@ -99,25 +149,7 @@ export default function GuestChatUI({ topic, onBack }: { topic: string; onBack?:
         )}
       </div>
 
-      {/* Quick replies (dynamic; fallback to flow defaults) */}
-      {(() => {
-        const flow = topic.toLowerCase().includes('place') ? flows['guest-place-order'] : resolveFlowFromTopic(topic)
-        const ctx = { topic: flow.title }
-        const available = suggestedReplies ?? (Array.isArray(flow.quickReplies(ctx)) ? (flow.quickReplies(ctx) as string[]) : [])
-        return available.length > 0 ? (
-          <div className="mt-3 flex flex-wrap justify-center gap-2">
-            {available.map((q) => (
-              <button
-                key={q}
-                onClick={() => sendUser(q)}
-                className="rounded-xl border border-blue/20 bg-white px-3 py-2 text-sm font-semibold text-blue hover:bg-blue/5 hover:border-blue/30 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue/50 focus:ring-offset-1 transition-all duration-150 touch-manipulation min-h-[44px]"
-              >
-                {q}
-              </button>
-            ))}
-          </div>
-        ) : null
-      })()}
+      {/* Quick replies are rendered inline after the latest bot message */}
 
       {/* Input row */}
       <form onSubmit={onSubmit} className="mt-3 flex items-center gap-2">
