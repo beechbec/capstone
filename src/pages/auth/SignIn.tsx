@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import { FiEye, FiEyeOff } from 'react-icons/fi'
 import { FcGoogle } from 'react-icons/fc'
-import Header from '../components/Header'
+import Header from '../../components/shared/Header'
 
 export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false)

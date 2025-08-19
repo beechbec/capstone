@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { FiArrowLeft, FiClock, FiPaperclip, FiSend, FiMessageSquare, FiMenu, FiX } from 'react-icons/fi'
-import SidebarActions from '../components/SidebarActions'
+import SidebarActions from '../components/shared/SidebarActions'
 import { resolveFlowFromTopic } from './flows'
 import type { BotMessage } from './types'
 

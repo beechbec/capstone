@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { FiChevronDown, FiInfo, FiHelpCircle, FiShoppingCart, FiPackage, FiSettings } from 'react-icons/fi'
-import Header from './components/Header'
-import ActionButton from './components/ActionButton'
+import Header from './components/shared/Header'
+import ActionButton from './components/shared/ActionButton'
 
 function App() {
   const chatSectionRef = useRef<HTMLDivElement | null>(null)

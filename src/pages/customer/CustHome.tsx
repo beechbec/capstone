@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { FiInfo, FiHelpCircle, FiShoppingCart, FiPackage, FiSettings, FiMenu, FiX } from 'react-icons/fi'
-import ActionButton from '../components/ActionButton'
-import SidebarActions from '../components/SidebarActions'
+import ActionButton from '../../components/shared/ActionButton'
+import SidebarActions from '../../components/shared/SidebarActions'
 
 export default function CustHome() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
