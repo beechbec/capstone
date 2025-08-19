@@ -35,7 +35,7 @@
 - Optional auth actions via `hideAuthActions` prop
 - Safe area insets for mobile
 
-### Sidebar Pattern (CustHome.tsx & ChatUI.tsx)
+### Sidebar Pattern (CustHome.tsx & Customer Chat)
 - **Desktop**: Static sidebar with `lg:sidebar-shadow` custom shadow
 - **Mobile**: Overlay with backdrop (bg-black bg-opacity-50 z-40)
 - **State**: `sidebarOpen` boolean for mobile toggle
@@ -48,12 +48,22 @@
 - Gold icon highlighting for featured actions
 - Hover/active/focus states with proper transitions
 
-### Chat Interface (src/chat/ChatUI.tsx)
+### Chat Interface (src/components/customer/chat/Chat.tsx)
 - **Container**: `h-screen overflow-hidden` for proper scrolling
 - **Messages**: `flex-1 overflow-y-auto` with `min-h-0` for flex child
 - **Bubbles**: Responsive max-width (max-w-[85%] sm:max-w-[75%] lg:max-w-[60%])
 - **Typing Indicator**: Gold dots with staggered animation delays
 - **Quick Replies**: Touch-friendly buttons with `min-h-[44px]`
+
+#### Customer Chat Modularization
+- **Location**: `src/components/customer/chat/`
+- **Entry**: `Chat.tsx` orchestrates state, flow resolution, and layout
+- **Subcomponents**:
+  - `ChatHeaderMobile.tsx` and `ChatHeaderDesktop.tsx`
+  - `ChatSidebar.tsx` (uses `SidebarActions`)
+  - `ChatMessageList.tsx` and `ChatMessageBubble.tsx`
+  - `ChatInput.tsx`
+- **Flows & Types**: remain under `src/chat/` (`flows/`, `types.ts`, `index.ts` for `resolveFlowFromTopic`)
 
 ### Form Patterns
 - **Input Height**: `h-11` or `h-12` for touch-friendliness
@@ -68,10 +78,18 @@
 ```
 src/
 ├── chat/
-│   ├── ChatUI.tsx          # Main chat interface
 │   ├── flows/              # Hardcoded flows (will migrate to Supabase)
 │   └── types.ts            # Chat type definitions + DB boilerplate
-├── components/             # Reusable UI components
+├── components/
+│   └── customer/
+│       └── chat/
+│           ├── Chat.tsx
+│           ├── ChatHeaderMobile.tsx
+│           ├── ChatHeaderDesktop.tsx
+│           ├── ChatSidebar.tsx
+│           ├── ChatMessageList.tsx
+│           ├── ChatMessageBubble.tsx
+│           └── ChatInput.tsx
 ├── pages/                  # Route-level components
 ├── lib/                    # External service integrations
 └── config/                 # Environment configuration
@@ -243,6 +261,23 @@ gap-4 sm:gap-6 lg:gap-8
 - **Composition**: Prefer composition over inheritance
 - **Props Drilling**: Avoid with proper state architecture
 - **Custom Hooks**: Extract reusable logic (planned)
+
+### Refactor & Modularization Policy
+- **When to Modularize**: If a UI file exceeds ~200 lines or mixes layout, state, and presentation, split it into focused subcomponents.
+- **Folder Placement**: Route-specific customer UI lives under `src/components/customer/<feature>/`. Example: customer chat under `src/components/customer/chat/`.
+- **Entry Orchestrator**: Keep a single entry component (e.g., `Chat.tsx`) responsible for:
+  - State, timers, side effects, and navigation
+  - Wiring chat flows via `resolveFlowFromTopic`
+  - Passing props/callbacks to presentational components
+- **Presentational Subcomponents**: Must be stateless (or controlled) and contain no business logic:
+  - Examples: `ChatHeaderMobile.tsx`, `ChatHeaderDesktop.tsx`, `ChatSidebar.tsx`, `ChatMessageList.tsx`, `ChatMessageBubble.tsx`, `ChatInput.tsx`
+  - Receive data through props; emit events via callbacks (e.g., `onQuickReply`, `onClose`)
+- **Domain Logic Location**: Chat flows and types remain in `src/chat/` (`flows/`, `types.ts`, `index.ts`). Presentational components must not import flows directly.
+- **Routing Updates**: When modularizing, update imports in routes to the new entry (e.g., `src/components/customer/chat/Chat`) and remove legacy files to avoid drift.
+- **Consistency Requirements** (Chat UI):
+  - Keep 2s typing delay, gold typing dots, quick replies, and idle warn/end timers in the orchestrator
+  - Maintain responsive/touch patterns and accessibility utilities on all interactive elements
+  - Preserve color palette and typography per this guide
 
 ### File Naming
 - **Components**: PascalCase.tsx
